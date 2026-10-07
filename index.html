@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pagos Festivalazo</title>
+<meta name="description" content="Alias para pagar entradas, cocina y merch del Festivalazo">
+<meta name="theme-color" content="#5f625b">
+<link rel="icon" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Questrial&family=League+Spartan:wght@600;700;800&family=Special+Elite&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--amarillo:#ffc000; --crema:#f6dfc0; --texto:#121212; --borde:#111}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:#7d7f78;color:#fff;font-family:Questrial,system-ui,sans-serif;font-size:16px;line-height:1.25;min-height:100vh;padding-bottom:calc(24px + env(safe-area-inset-bottom));overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-60px;z-index:-2;background:url(img/fondo.jpg) center/cover no-repeat;filter:blur(22px) saturate(1.1)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.08) 40%,rgba(0,0,0,.3))}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+.sombra{text-shadow:0 2px 6px rgba(0,0,0,.35)}
+
+/* encabezado (igual al cronograma) */
+.colgante{display:block;width:100%;height:150px;object-fit:cover;object-position:right top;
+  -webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent),linear-gradient(to right,transparent,#000 25%);
+  -webkit-mask-composite:source-in;mask-image:linear-gradient(to bottom,#000 55%,transparent),linear-gradient(to right,transparent,#000 25%);mask-composite:intersect}
+header{margin-top:-62px;position:relative;text-align:center;padding-bottom:18px}
+h1{font-weight:400;font-size:min(13vw,64px);line-height:1}
+.sub{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:2px}
+.sub img{width:96px;height:57px;object-fit:cover;-webkit-mask-image:radial-gradient(closest-side,#000 30%,transparent);mask-image:radial-gradient(closest-side,#000 30%,transparent)}
+.sub .f{display:block;font-family:"Special Elite",monospace;font-size:30px;color:var(--crema);line-height:1}
+.sub .e{display:block;font-family:Caveat,cursive;font-size:22px;color:#fff;line-height:1;margin-top:2px}
+
+/* tarjeta de pago */
+.pago{background:rgba(18,18,18,.55);border:2px solid var(--borde);margin-bottom:14px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.pago .cab{background:var(--amarillo);color:var(--texto);padding:10px 14px;font-family:"League Spartan",sans-serif;font-weight:800;font-size:22px;letter-spacing:1.5px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pago .cab small{font-weight:600;font-size:14px;letter-spacing:.5px}
+.pago .cuerpo{padding:16px 14px 14px;text-align:center}
+.etq{font-size:13px;letter-spacing:2px;color:var(--crema)}
+.alias{font-family:"League Spartan",sans-serif;font-weight:700;font-size:min(8.4vw,36px);margin:4px 0 14px;word-break:break-all;user-select:all;-webkit-user-select:all}
+.copiar{width:100%;background:#fff;color:var(--texto);border:2px solid var(--borde);padding:14px 10px;font-family:"League Spartan",sans-serif;font-weight:800;font-size:19px;letter-spacing:.5px}
+.copiar.ok{background:#b9e19b}
+.pasos{list-style:none;margin:16px 0 4px;text-align:left;display:grid;gap:8px;font-size:16px}
+.pasos li{display:flex;gap:10px;align-items:flex-start}
+.pasos b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--amarillo);color:var(--texto);font-family:"League Spartan",sans-serif;font-size:15px;display:flex;align-items:center;justify-content:center}
+
+.otros{margin-top:22px;text-align:center}
+.otros p{font-size:15px;margin-bottom:10px;color:var(--crema)}
+.otros nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.otros a{background:rgba(18,18,18,.55);border:2px solid var(--borde);padding:10px 14px;text-decoration:none;font-family:"League Spartan",sans-serif;font-weight:700;letter-spacing:1px}
+.aviso{margin-top:18px;text-align:center;font-size:14px;color:#eee}
+</style>
+</head>
+<body>
+<img class="colgante" src="img/colgante.jpg" alt="">
+<div class="wrap">
+  <header class="sombra">
+    <h1>PAGOS</h1>
+    <div class="sub">
+      <img src="img/margaritas.jpg" alt="">
+      <div><span class="f">festivalazo</span><span class="e">9na edición</span></div>
+    </div>
+  </header>
+
+  <main id="pagos"></main>
+  <div class="otros sombra" id="otros"></div>
+  <p class="aviso sombra">Antes de confirmar, fijate que el alias sea exactamente este.</p>
+</div>
+
+<script>
+const CUENTAS = {
+  entradas: { titulo: 'ENTRADAS', sub: '', alias: 'festivalazo.elorigen' },
+  cocina:   { titulo: 'COCINA',   sub: 'comidas', alias: 'festivalazo.cocina' },
+  merch:    { titulo: 'MERCH',    sub: 'indumentaria', alias: 'ropita.festivalazo' },
+};
+
+const p = new URLSearchParams(location.search).get('p');
+const elegida = CUENTAS[p] ? p : null;
+const mostrar = elegida ? [elegida] : Object.keys(CUENTAS);
+
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+document.getElementById('pagos').innerHTML = mostrar.map(k => {
+  const c = CUENTAS[k];
+  return `<section class="pago">
+    <div class="cab">${c.titulo}${c.sub ? `<small>${c.sub}</small>` : ''}</div>
+    <div class="cuerpo">
+      <div class="etq">ALIAS</div>
+      <div class="alias">${esc(c.alias)}</div>
+      <button class="copiar" data-alias="${esc(c.alias)}">COPIAR ALIAS</button>
+      ${elegida ? `<ol class="pasos">
+        <li><b>1</b><span>Tocá <strong>Copiar alias</strong>.</span></li>
+        <li><b>2</b><span>Abrí tu banco o billetera y transferí a ese alias.</span></li>
+        <li><b>3</b><span>Mostrá el comprobante en el puesto.</span></li>
+      </ol>` : ''}
+    </div>
+  </section>`;
+}).join('');
+
+if (elegida) {
+  document.getElementById('otros').innerHTML = `<p>¿Pagás otra cosa?</p><nav>${
+    Object.keys(CUENTAS).filter(k => k !== elegida)
+      .map(k => `<a href="?p=${k}">${CUENTAS[k].titulo}</a>`).join('')}</nav>`;
+}
+
+async function copiar(txt) {
+  try { await navigator.clipboard.writeText(txt); return true; } catch (e) {}
+  const t = document.createElement('textarea');
+  t.value = txt; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+  document.body.appendChild(t); t.select(); t.setSelectionRange(0, txt.length);
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+  t.remove(); return ok;
+}
+
+document.addEventListener('click', async e => {
+  const b = e.target.closest('.copiar'); if (!b) return;
+  const ok = await copiar(b.dataset.alias);
+  b.textContent = ok ? '¡COPIADO! ✓' : 'Mantené apretado el alias para copiarlo';
+  b.classList.toggle('ok', ok);
+  setTimeout(() => { b.textContent = 'COPIAR ALIAS'; b.classList.remove('ok'); }, 2500);
+});
+</script>
+</body>
+</html>
